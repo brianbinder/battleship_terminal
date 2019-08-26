@@ -10,11 +10,13 @@ public class DotComGame {
   static final char shipChar = '□';
   static final char hitChar = '☒';
   static final char missChar = '☹';
+  static final char emptyChar = ' ';
   static final int pieceSize = 4;
 
   ArrayList<DotCom> dotComs;
   int[][] grid;
-  boolean vertical = false;
+  private boolean vertical = false;
+  private boolean showPieces = true;
 
   private void createGrid() {
     grid = new int[7][7];
@@ -71,6 +73,10 @@ public class DotComGame {
     return grid[y][x] == 0;
   }
 
+  public void start(boolean hide) {
+    showPieces = hide;
+    start();
+  }
   public void start() {
     createGrid();
     createDotComs();
@@ -80,13 +86,13 @@ public class DotComGame {
   private char gridChar(int val) {
     switch (val) {
       case 1:
-        return DotComGame.shipChar;
+        return showPieces ? DotComGame.shipChar : DotComGame.emptyChar;
       case 2:
         return DotComGame.hitChar;
       case 3:
         return DotComGame.missChar;
       default:
-        return ' ';
+        return DotComGame.emptyChar;
     }
   }
 
@@ -150,13 +156,19 @@ public class DotComGame {
     // optionally hide the ship locations
     // rewrite to use enums for things like cToY
     // dotcom names should be printed when they bust
+    boolean hidden = false;
+    int printEvery = 1;
+    try {
+      hidden = args[0].toLowerCase().equals("hide");
+      printEvery = Integer.parseInt(args[1]);
+    } catch (ArrayIndexOutOfBoundsException e) {}
     DotComGame activeGame = new DotComGame();
-    activeGame.start();
+    activeGame.start(hidden);
     int numOfGuesses = 0;
     while (activeGame.dotComs.size() > 0) {
       ++numOfGuesses;
       activeGame.handleGuess(query());
-      if (numOfGuesses % 5 == 0) activeGame.printBoard();
+      if (numOfGuesses % printEvery == 0) activeGame.printBoard();
     }
     System.out.printf("You win! It took %d guesses.", numOfGuesses);
   }
