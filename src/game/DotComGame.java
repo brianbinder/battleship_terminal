@@ -7,9 +7,10 @@ import java.io.*;
 
 public class DotComGame {
   static final String[] dotComNames = {"Amazon", "EBay", "PayPal"};
+  static final char missChar = '☹';
   static final char shipChar = '□';
   static final char hitChar = '☒';
-  static final char missChar = '☹';
+  static final char killChar = '☠';
   static final char emptyChar = ' ';
   static final int pieceSize = 4;
 
@@ -74,7 +75,7 @@ public class DotComGame {
   }
 
   public void start(boolean hide) {
-    showPieces = hide;
+    showPieces = !hide;
     start();
   }
   public void start() {
@@ -91,6 +92,8 @@ public class DotComGame {
         return DotComGame.hitChar;
       case 3:
         return DotComGame.missChar;
+      case 4:
+        return DotComGame.killChar;
       default:
         return DotComGame.emptyChar;
     }
@@ -98,11 +101,12 @@ public class DotComGame {
 
   private int resultValue(String result) {
     switch (result) {
+      case "hit":
+        return 2;
       case "miss":
         return 3;
-      case "hit":
       case "kill":
-        return 2;
+        return 4;
       default:
         return 0;
     }
@@ -119,12 +123,26 @@ public class DotComGame {
     for (DotCom piece : dotComs) {
       result = piece.checkYourself(guess);
       if (result != "miss") {
-        if (result == "kill") dotComs.remove(piece);
+        if (result == "kill") removePiece(piece);
         break;
       }
     }
     updateGrid(result, guess);
-    System.out.println(result);
+    if(!result.equals("kill")) System.out.println(result);
+  }
+
+  private void removePiece(DotCom piece) {
+    for (String cell : piece.readHits()) {
+      updateGrid("kill", cell);
+    }
+    System.out.printf(
+      "%n%n%c  %c%n%s has run out of funding!!!%n%c  %c%n%n%n",
+      DotComGame.killChar,
+      DotComGame.killChar,
+      piece.name,
+      DotComGame.killChar,
+      DotComGame.killChar
+    );
   }
   
   private void printBoard() {
@@ -153,9 +171,9 @@ public class DotComGame {
 
   public static void main(String[] args) {
     // move more functionality to the board class
-    // optionally hide the ship locations
     // rewrite to use enums for things like cToY
-    // dotcom names should be printed when they bust
+    // handle invalid user input gracefully
+    // get terminal width and center board accordingly
     boolean hidden = false;
     int printEvery = 1;
     try {
