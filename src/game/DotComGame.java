@@ -149,6 +149,7 @@ public class DotComGame {
     // move more functionality to the board class
     // optionally hide the ship locations
     // rewrite to use enums for things like cToY
+    // dotcom names should be printed when they bust
     DotComGame activeGame = new DotComGame();
     activeGame.start();
     int numOfGuesses = 0;
