@@ -1,8 +1,10 @@
 package game;
 
 class Board {
+  int[][] grid;
+  BoardGame game;
 
-  enum YVal {
+  static enum YVal {
     A (0, 'A'),
     B (1, 'B'),
     C (2, 'C'),
@@ -17,6 +19,12 @@ class Board {
       val = y;
       letter = c;
     }
+  }
+
+  public Board(BoardGame gameModel) {
+    game = gameModel;
+    grid = new int[7][7];
+    for (int i = 0; i < 7; i++) grid[i] = new int[7];
   }
 
   public static char yToC(int y) {
@@ -34,6 +42,32 @@ class Board {
       if (pair.letter == c) return pair.val;
     }
     throw new IllegalArgumentException("Valid c values are A through G");
+  }
+
+  public static String coordsToString(int y, int x) {
+    return Board.yToC(y) + Integer.toString(x);
+  }
+
+  public void setValue(String guess, int val) {
+    int y = Board.cToY(guess.charAt(0));
+    int x = Integer.valueOf(guess.substring(1));
+    setValue(y, x, val);
+  }
+  public void setValue(int y, int x, int val) {
+    grid[y][x] = val;
+  }
+
+  public boolean isEmpty(int y, int x) {
+    return grid[y][x] == 0;
+  }
+
+  public void print() {
+    for (int i = 0; i < grid.length; i++) {
+      String rowString = String.valueOf(Board.yToC(i));
+      for (int j = 0; j < grid[i].length; j++) rowString += " " + String.valueOf(game.boardChar(grid[i][j])) + " ";
+      System.out.println(rowString);
+    }
+    System.out.println("  0  1  2  3  4  5  6 ");
   }
 
 }
