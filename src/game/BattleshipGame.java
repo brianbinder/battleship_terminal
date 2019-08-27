@@ -5,8 +5,8 @@ import java.util.Arrays;
 import java.lang.Math;
 import java.io.*;
 
-public class DotComGame {
-  static final String[] dotComNames = {"Amazon", "EBay", "PayPal"};
+public class BattleshipGame {
+  static final String[] battleshipNames = {"Amazon", "EBay", "PayPal"};
   static final char missChar = '☹';
   static final char shipChar = '□';
   static final char hitChar = '☒';
@@ -14,7 +14,7 @@ public class DotComGame {
   static final char emptyChar = ' ';
   static final int pieceSize = 4;
 
-  ArrayList<DotCom> dotComs;
+  ArrayList<Battleship> battleships;
   int[][] grid;
   private boolean vertical = false;
   private boolean showPieces = true;
@@ -24,13 +24,13 @@ public class DotComGame {
     for (int i = 0; i < 7; i++) grid[i] = new int[7];
   }
 
-  private void createDotComs() {
-    dotComs = new ArrayList<DotCom>();
-    for (String name : DotComGame.dotComNames) dotComs.add(new DotCom(name));
-    for (DotCom piece : dotComs) placeDotCom(piece);
+  private void createBattleships() {
+    battleships = new ArrayList<Battleship>();
+    for (String name : BattleshipGame.battleshipNames) battleships.add(new Battleship(name));
+    for (Battleship piece : battleships) placeBattleship(piece);
   }
 
-  private void placeDotCom(DotCom piece) {
+  private void placeBattleship(Battleship piece) {
     int maxAttempts = 200;
     int currentAttempt = 0;
     vertical = !vertical;
@@ -40,8 +40,8 @@ public class DotComGame {
       int x = (int)(Math.random() * 7);
       try {
         if (isValidPlacement(y, x)) {
-          String[] locations = new String[DotComGame.pieceSize];
-          for (int i = 0; i < DotComGame.pieceSize; i++) {
+          String[] locations = new String[BattleshipGame.pieceSize];
+          for (int i = 0; i < BattleshipGame.pieceSize; i++) {
             if (vertical) {
               locations[i] = Board.yToC(y + i) + Integer.toString(x);
               grid[y + i][x] = 1;
@@ -59,7 +59,7 @@ public class DotComGame {
   }
 
   private boolean isValidPlacement(int y, int x) {
-    for (int i = 0; i < DotComGame.pieceSize; i++) {
+    for (int i = 0; i < BattleshipGame.pieceSize; i++) {
       if (vertical) {
         if (!isEmpty(y + i, x)) return false;
       } else {
@@ -80,22 +80,22 @@ public class DotComGame {
   }
   public void start() {
     createGrid();
-    createDotComs();
+    createBattleships();
     printBoard();
   }
 
   private char gridChar(int val) {
     switch (val) {
       case 1:
-        return showPieces ? DotComGame.shipChar : DotComGame.emptyChar;
+        return showPieces ? BattleshipGame.shipChar : BattleshipGame.emptyChar;
       case 2:
-        return DotComGame.hitChar;
+        return BattleshipGame.hitChar;
       case 3:
-        return DotComGame.missChar;
+        return BattleshipGame.missChar;
       case 4:
-        return DotComGame.killChar;
+        return BattleshipGame.killChar;
       default:
-        return DotComGame.emptyChar;
+        return BattleshipGame.emptyChar;
     }
   }
 
@@ -120,7 +120,7 @@ public class DotComGame {
 
   private void handleGuess(String guess) {
     String result = "miss";
-    for (DotCom piece : dotComs) {
+    for (Battleship piece : battleships) {
       result = piece.checkYourself(guess);
       if (result != "miss") {
         if (result == "kill") removePiece(piece);
@@ -131,19 +131,19 @@ public class DotComGame {
     if(!result.equals("kill")) System.out.println(result);
   }
 
-  private void removePiece(DotCom piece) {
+  private void removePiece(Battleship piece) {
     for (String cell : piece.readHits()) {
       updateGrid("kill", cell);
     }
     System.out.printf(
       "%n%n%c  %c%n%s has run out of funding!!!%n%c  %c%n%n%n",
-      DotComGame.killChar,
-      DotComGame.killChar,
+      BattleshipGame.killChar,
+      BattleshipGame.killChar,
       piece.name,
-      DotComGame.killChar,
-      DotComGame.killChar
+      BattleshipGame.killChar,
+      BattleshipGame.killChar
     );
-    dotComs.remove(piece);
+    battleships.remove(piece);
   }
   
   private void printBoard() {
@@ -182,10 +182,10 @@ public class DotComGame {
       hidden = args[0].toLowerCase().equals("hide");
       printEvery = Integer.parseInt(args[1]);
     } catch (ArrayIndexOutOfBoundsException e) {}
-    DotComGame activeGame = new DotComGame();
+    BattleshipGame activeGame = new BattleshipGame();
     activeGame.start(hidden);
     int numOfGuesses = 0;
-    while (activeGame.dotComs.size() > 0) {
+    while (activeGame.battleships.size() > 0) {
       ++numOfGuesses;
       activeGame.handleGuess(query());
       if (numOfGuesses % printEvery == 0) activeGame.printBoard();

@@ -3,12 +3,12 @@ package game;
 import java.util.Arrays;
 import java.util.ArrayList;
 
-class DotCom {
+class Battleship {
   String name;
   private ArrayList<String> locationCells;
   private ArrayList<String> hitCells = new ArrayList<>();
 
-  DotCom(String inputName) {
+  Battleship(String inputName) {
     name = inputName;
   }
 
