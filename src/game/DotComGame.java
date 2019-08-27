@@ -143,6 +143,7 @@ public class DotComGame {
       DotComGame.killChar,
       DotComGame.killChar
     );
+    dotComs.remove(piece);
   }
   
   private void printBoard() {
@@ -171,9 +172,10 @@ public class DotComGame {
 
   public static void main(String[] args) {
     // move more functionality to the board class
-    // rewrite to use enums for things like cToY
     // handle invalid user input gracefully
+    // hits cannot become misses
     // get terminal width and center board accordingly
+    // vary the size of ships
     boolean hidden = false;
     int printEvery = 1;
     try {
