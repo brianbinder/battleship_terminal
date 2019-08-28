@@ -149,9 +149,13 @@ public class BattleshipGame implements BoardGame {
     activeGame.printBoard();
     int numOfGuesses = 0;
     while (activeGame.battleships.size() > 0) {
-      ++numOfGuesses;
-      activeGame.handleGuess(GameInterface.query());
-      if (numOfGuesses % printEvery == 0) activeGame.printBoard();
+      try {
+        activeGame.handleGuess(GameInterface.query());
+        ++numOfGuesses;
+        if (numOfGuesses % printEvery == 0) activeGame.printBoard();
+      } catch (IllegalArgumentException e) {
+        System.out.println(e);
+      }
     }
     System.out.printf("You win! It took %d guesses.", numOfGuesses);
   }

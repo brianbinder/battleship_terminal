@@ -5,17 +5,17 @@ class Board {
   BoardGame game;
 
   static enum YVal {
-    A (0, 'A'),
-    B (1, 'B'),
-    C (2, 'C'),
-    D (3, 'D'),
-    E (4, 'E'),
-    F (5, 'F'),
-    G (6, 'G');
+    A (0, "A"),
+    B (1, "B"),
+    C (2, "C"),
+    D (3, "D"),
+    E (4, "E"),
+    F (5, "F"),
+    G (6, "G");
 
     int val;
-    char letter;
-    YVal(int y, char c) {
+    String letter;
+    YVal(int y, String c) {
       val = y;
       letter = c;
     }
@@ -27,30 +27,50 @@ class Board {
     for (int i = 0; i < 7; i++) grid[i] = new int[7];
   }
 
-  public static char yToC(int y) {
+  private static IllegalArgumentException argumentComplaint() {
+    throw new IllegalArgumentException("Input must be between A0 and G6!!");
+  }
+
+  public static String yToString(int y) {
     for (YVal pair : YVal.values()) {
       if (pair.val == y) return pair.letter;
     }
-    throw new IllegalArgumentException("Y value must be between 0 and 6");
+    throw argumentComplaint();
   }
 
   public static int cToY(String s) {
-    return cToY(s.charAt(0));
-  }
-  public static int cToY(char c) {
     for (YVal pair : YVal.values()) {
-      if (pair.letter == c) return pair.val;
+      if (pair.letter.equals(s)) return pair.val;
     }
-    throw new IllegalArgumentException("Valid c values are A through G");
+    throw argumentComplaint();
   }
 
   public static String coordsToString(int y, int x) {
-    return Board.yToC(y) + Integer.toString(x);
+    return Board.yToString(y) + Integer.toString(x);
   }
 
   public void setValue(String guess, int val) {
-    int y = Board.cToY(guess.charAt(0));
-    int x = Integer.valueOf(guess.substring(1));
+    String yString = "";
+    String xString = "";
+    boolean hitDigit = false;
+    for (char c : guess.toCharArray()) {
+      if (Character.isAlphabetic(c)) {
+        if (!hitDigit) {
+          yString += Character.toString(c);
+        } else {
+          throw Board.argumentComplaint();
+        }
+      } else {
+        hitDigit = true;
+        if (Character.isDigit(c)) {
+          xString += Character.toString(c);
+        } else {
+          throw Board.argumentComplaint();
+        }
+      }
+    }
+    int y = Board.cToY(yString);
+    int x = Integer.valueOf(xString);
     setValue(y, x, val);
   }
   public void setValue(int y, int x, int val) {
@@ -63,7 +83,7 @@ class Board {
 
   public void print() {
     for (int i = 0; i < grid.length; i++) {
-      String rowString = String.valueOf(Board.yToC(i));
+      String rowString = String.valueOf(Board.yToString(i));
       for (int j = 0; j < grid[i].length; j++) rowString += " " + String.valueOf(game.boardChar(grid[i][j])) + " ";
       System.out.println(rowString);
     }
