@@ -101,7 +101,7 @@ public class BattleshipGame implements BoardGame {
     }
   }
 
-  private void handleGuess(String guess) {
+  private boolean validGuess(String guess) {
     String result = "miss";
     for (Battleship piece : battleships) {
       result = piece.checkYourself(guess);
@@ -110,8 +110,13 @@ public class BattleshipGame implements BoardGame {
         break;
       }
     }
+    if (!board.isEmpty(guess) && result.equals("miss")) {
+      System.out.printf("%s was already used%n", guess);
+      return false;
+    }
     board.setValue(guess, resultValue(result));
     if(!result.equals("kill")) System.out.println(result);
+    return true;
   }
 
   private void removePiece(Battleship piece) {
@@ -134,8 +139,6 @@ public class BattleshipGame implements BoardGame {
   }
 
   public static void main(String[] args) {
-    // handle invalid user input gracefully
-    // hits cannot become misses
     // get terminal width and center board accordingly
     // vary the size of ships
     // add color to the board
@@ -150,8 +153,7 @@ public class BattleshipGame implements BoardGame {
     int numOfGuesses = 0;
     while (activeGame.battleships.size() > 0) {
       try {
-        activeGame.handleGuess(GameInterface.query());
-        ++numOfGuesses;
+        if (activeGame.validGuess(GameInterface.query())) ++numOfGuesses;
         if (numOfGuesses % printEvery == 0) activeGame.printBoard();
       } catch (IllegalArgumentException e) {
         System.out.println(e);

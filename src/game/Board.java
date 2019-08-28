@@ -49,9 +49,8 @@ class Board {
     return Board.yToString(y) + Integer.toString(x);
   }
 
-  public void setValue(String guess, int val) {
+  private static int yFromGuess(String guess) {
     String yString = "";
-    String xString = "";
     boolean hitDigit = false;
     for (char c : guess.toCharArray()) {
       if (Character.isAlphabetic(c)) {
@@ -62,6 +61,20 @@ class Board {
         }
       } else {
         hitDigit = true;
+        if (!Character.isDigit(c)) throw Board.argumentComplaint();
+      }
+    }
+    return Board.cToY(yString);
+  }
+
+  private static int xFromGuess(String guess) {
+    String xString = "";
+    boolean hitDigit = false;
+    for (char c : guess.toCharArray()) {
+      if (Character.isAlphabetic(c)) {
+        if (hitDigit) throw Board.argumentComplaint();
+      } else {
+        hitDigit = true;
         if (Character.isDigit(c)) {
           xString += Character.toString(c);
         } else {
@@ -69,14 +82,19 @@ class Board {
         }
       }
     }
-    int y = Board.cToY(yString);
-    int x = Integer.valueOf(xString);
-    setValue(y, x, val);
+    return Integer.valueOf(xString);
+  }
+
+  public void setValue(String guess, int val) {
+    setValue(Board.yFromGuess(guess), Board.xFromGuess(guess), val);
   }
   public void setValue(int y, int x, int val) {
     grid[y][x] = val;
   }
 
+  public boolean isEmpty(String guess) {
+    return isEmpty(Board.yFromGuess(guess), Board.xFromGuess(guess));
+  }
   public boolean isEmpty(int y, int x) {
     return grid[y][x] == 0;
   }
